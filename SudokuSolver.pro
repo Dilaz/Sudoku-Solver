@@ -15,10 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         sudokusolver.cpp \
     numberwidget.cpp \
-    numberpicker.cpp
+    numberpicker.cpp \
+    clickablelabel.cpp
 
 HEADERS  += sudokusolver.h \
     numberwidget.h \
-    numberpicker.h
+    numberpicker.h \
+    clickablelabel.h
 
 FORMS    += sudokusolver.ui
+
+QMAKE_CXXFLAGS += -std=c++11
