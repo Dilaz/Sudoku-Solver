@@ -14,9 +14,11 @@ TEMPLATE = app
 
 SOURCES += main.cpp\
         sudokusolver.cpp \
-    numberwidget.cpp
+    numberwidget.cpp \
+    numberpicker.cpp
 
 HEADERS  += sudokusolver.h \
-    numberwidget.h
+    numberwidget.h \
+    numberpicker.h
 
 FORMS    += sudokusolver.ui
