@@ -1,19 +1,25 @@
 #ifndef NUMBERPICKER_H
 #define NUMBERPICKER_H
 
-#include <QWidget>
+#include <QDialog>
 #include <QGridLayout>
 #include <QLabel>
+#include <QSet>
 
-class NumberPicker : public QWidget
+#include "clickablelabel.h"
+
+class NumberPicker : public QDialog
 {
     Q_OBJECT
 public:
-    explicit NumberPicker(QWidget *parent = 0);
+    explicit NumberPicker(const QSet<int> &disabled);
 
 signals:
-
+    void closed(const QString &);
 public slots:
+
+private slots:
+    void labelClicked(const QString &str);
 
 };
 

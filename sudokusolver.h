@@ -2,6 +2,11 @@
 #define SUDOKUSOLVER_H
 
 #include <QWidget>
+#include <QLayout>
+#include <QResizeEvent>
+#include <QDebug>
+#include "numberwidget.h"
+#include "numberpicker.h"
 
 namespace Ui {
 class SudokuSolver;
@@ -17,6 +22,17 @@ public:
 
 private:
     Ui::SudokuSolver *ui;
+
+    NumberWidget *m_activeWidget;
+    NumberPicker *m_picker;
+
+private slots:
+    void numberClicked(NumberWidget *widget);
+    void numberChosen(const QString &str);
+
+protected:
+    void resizeEvent(QResizeEvent *event);
+    void paintEvent(QPaintEvent *event);
 };
 
 #endif // SUDOKUSOLVER_H
