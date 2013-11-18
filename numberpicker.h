@@ -4,7 +4,7 @@
 #include <QDialog>
 #include <QGridLayout>
 #include <QLabel>
-#include <QSet>
+#include <QMap>
 
 #include "clickablelabel.h"
 
@@ -12,7 +12,7 @@ class NumberPicker : public QDialog
 {
     Q_OBJECT
 public:
-    explicit NumberPicker(const QSet<int> &disabled);
+    explicit NumberPicker(const QMap<int, int> &disabled);
 
 signals:
     void closed(const QString &);

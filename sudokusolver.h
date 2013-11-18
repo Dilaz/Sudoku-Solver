@@ -21,6 +21,8 @@ public:
     ~SudokuSolver();
 
 private:
+    void linkNumbers();
+
     Ui::SudokuSolver *ui;
 
     NumberWidget *m_activeWidget;

@@ -6,8 +6,11 @@
 #include <QLabel>
 #include <QPainter>
 #include <QPaintEvent>
-#include <QSet>
+#include <QMap>
+#include <QTimer>
 #include <QDebug>
+
+static const QString DEFAULT_CHAR("?");
 
 class NumberWidget : public QWidget
 {
@@ -20,10 +23,7 @@ public:
 
     int num() const;
     bool unknown() const;
-
-    void addDisabledNumber(int num);
-    void removeDisabledNumber(int num);
-    const QSet<int> &disabledNumbers() const;
+    const QMap<int, int> &disabledNumbers() const;
 
     bool solved() const;
 
@@ -31,11 +31,15 @@ private:
     QLabel *m_label;
     int m_num;
     bool m_unknown;
-    QSet<int> m_disabledNumbers;
+    QMap<int, int> m_disabledNumbers;
     bool m_solved;
 signals:
     void clicked(NumberWidget *);
+    void numberChanged(int);
+    void changedToUnknown(int);
 public slots:
+    void addDisabledNumber(int num);
+    void removeDisabledNumber(int num);
 
 protected:
     void paintEvent(QPaintEvent *event);

@@ -1,6 +1,6 @@
 #include "numberpicker.h"
 
-NumberPicker::NumberPicker(const QSet<int> &disabled) :
+NumberPicker::NumberPicker(const QMap<int, int> &disabled) :
     QDialog(nullptr, Qt::Dialog)
 {
     // Add layout
@@ -14,7 +14,7 @@ NumberPicker::NumberPicker(const QSet<int> &disabled) :
         layout->addWidget(label, i / 3, i % 3);
 
         // Check if number is in disabled numbers
-        if (disabled.contains(i + 1)) {
+        if (disabled[i + 1] != 0) {
             // Disable current label
             label->setDisabled(true);
         }

@@ -19,6 +19,9 @@ SudokuSolver::SudokuSolver(QWidget *parent) :
             layout->addWidget(widget, y, x);
         }
     }
+
+    // Link them together
+    linkNumbers();
 }
 
 SudokuSolver::~SudokuSolver()
@@ -30,6 +33,51 @@ SudokuSolver::~SudokuSolver()
         m_picker->close();
         delete m_picker;
         m_picker = nullptr;
+    }
+}
+
+void SudokuSolver::linkNumbers()
+{
+    // Get layout
+    QGridLayout *grid = qobject_cast<QGridLayout *>(layout());
+
+    // Loop all widgets
+    for (int y = 0; y < 9; y++) {
+        for (int x = 0; x < 9; x++) {
+            // Get widget by coordinates
+            NumberWidget *current = qobject_cast<NumberWidget *>(grid->itemAtPosition(y, x)->widget());
+
+            // Find all widgets in the same row & column
+            for (int i = 0; i < 9; i++) {
+                // Row
+                NumberWidget *widget = qobject_cast<NumberWidget *>(grid->itemAtPosition(y, i)->widget());
+                if (widget != current) {
+                    QObject::connect(current, SIGNAL(numberChanged(int)), widget, SLOT(addDisabledNumber(int)));
+                    QObject::connect(current, SIGNAL(changedToUnknown(int)), widget, SLOT(removeDisabledNumber(int)));
+                }
+
+                // Column
+                widget = qobject_cast<NumberWidget *>(grid->itemAtPosition(i, x)->widget());
+                if (widget != current) {
+                    QObject::connect(current, SIGNAL(numberChanged(int)), widget, SLOT(addDisabledNumber(int)));
+                    QObject::connect(current, SIGNAL(changedToUnknown(int)), widget, SLOT(removeDisabledNumber(int)));
+                }
+            }
+
+            // Find all widgets in the same box
+            int firstX = 3 * int(x / 3);
+            int firstY = 3 * int(y / 3);
+            for (int i = 0; i < 9; i++) {
+                // Get widget by position
+                NumberWidget *widget = qobject_cast<NumberWidget *>(grid->itemAtPosition(firstY + (i / 3), firstX + (i % 3))->widget());
+
+                // Skip current
+                if (widget != current) {
+                    QObject::connect(current, SIGNAL(numberChanged(int)), widget, SLOT(addDisabledNumber(int)));
+                    QObject::connect(current, SIGNAL(changedToUnknown(int)), widget, SLOT(removeDisabledNumber(int)));
+                }
+            }
+        }
     }
 }
 
@@ -65,53 +113,13 @@ void SudokuSolver::numberChosen(const QString &str)
 
     if (ok) {
         m_activeWidget->setNum(num);
-
-        // Get widget position
-        int x = 0;
-        int y = 0;
-        int rowSpan = 0;
-        int columnSpan = 0;
-        QGridLayout *grid = qobject_cast<QGridLayout *>(layout());
-        grid->getItemPosition(grid->indexOf(m_activeWidget), &y, &x, &rowSpan, &columnSpan);
-
-        qDebug() << "Pos: " << x << "," << y;
-
-        // Find all widgets in the same row & column
-        for (int i = 0; i < 9; i++) {
-            // Row
-            NumberWidget *widget = qobject_cast<NumberWidget *>(grid->itemAtPosition(y, i)->widget());
-            if (widget != m_activeWidget) {
-                widget->addDisabledNumber(num);
-            }
-
-            // Column
-            widget = qobject_cast<NumberWidget *>(grid->itemAtPosition(i, x)->widget());
-            if (widget != m_activeWidget) {
-                widget->addDisabledNumber(num);
-            }
-        }
-
-        // Find all widgets in the same box
-        int firstX = 3 * int(x / 3);
-        int firstY = 3 * int(y / 3);
-        qDebug() << "First in block: " << QPoint(firstX, firstY);
-        for (int i = 0; i < 9; i++) {
-            // Get widget by position
-            NumberWidget *widget = qobject_cast<NumberWidget *>(grid->itemAtPosition(firstY + (i / 3), firstX + (i % 3))->widget());
-
-            // Skip current
-            if (widget == m_activeWidget) {
-                continue;
-            }
-            qDebug() << QPoint(firstX + (i / 3), firstY + (i / 3));
-            widget->addDisabledNumber(num);
-        }
     }
 
     // Disable numberwidget usage
     m_activeWidget = nullptr;
 
     // Delete number picker
+    QObject::disconnect(m_picker, SIGNAL(closed(QString)), this, SLOT(numberChosen(QString)));
     m_picker->close();
     delete m_picker;
     m_picker = nullptr;
